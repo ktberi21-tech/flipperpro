@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="FlipperPro — скринер недооценённых квартир Москвы для инвесторов. Покажем квартиры с прибылью от 1 млн ₽ за 2–4 месяца. Помогаем под ключ.">
+<title>FlipperPro — Недооценённые квартиры Москвы для флипперов</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: {
+        display: ['Inter', 'system-ui', 'sans-serif'],
+        body: ['Inter', 'system-ui', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+      },
+      colors: {
+        // CIAN-light палитра
+        cian: { 50:'#EAF1FF', 100:'#D6E2FE', 300:'#7AA6FF', 500:'#0468FF', 600:'#0357D9', 700:'#024AB8' },
+        sun:  { 50:'#FFFAE0', 100:'#FFF3B8', 400:'#FFD83A', 500:'#FFCC00', 600:'#E6B800' },
+        ink:  { 900:'#0B1530', 800:'#152242', 700:'#1F2B47', 600:'#2F3441', 500:'#4A5470' },
+        slate2: { 50:'#F4F6FA', 100:'#EDEFF3', 200:'#E4E4E7', 300:'#D4D7DD', 500:'#737A8E', 700:'#4A4F5C' },
+        ok:   { 50:'#E8F7EC', 500:'#2BA84A', 600:'#1F8A3B' },
+        err:  { 500:'#E63B26' },
+      },
+      boxShadow: {
+        'card': '0 4px 24px -4px rgba(11,21,48,.08), 0 1px 2px rgba(11,21,48,.04)',
+        'card-hov': '0 10px 32px -6px rgba(4,104,255,.18), 0 2px 4px rgba(11,21,48,.05)',
+        'pop': '0 12px 40px -8px rgba(4,104,255,.28)',
+      },
+    }
+  }
+}
+</script>
+<style>
+  html { scroll-behavior: smooth; }
+  body {
+    background:
+      radial-gradient(60% 40% at 80% -10%, rgba(4,104,255,.06), transparent 70%),
+      radial-gradient(40% 30% at -10% 10%, rgba(255,204,0,.06), transparent 70%),
+      #FFFFFF;
+    color: #152242;
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,h2,h3,h4 { font-family: 'Inter', system-ui, sans-serif; letter-spacing: -0.02em; }
+  .display { font-weight: 800; letter-spacing: -0.032em; }
+  .num { font-family: 'JetBrains Mono', ui-monospace, monospace; font-feature-settings: "tnum"; }
+  .pill { border:1px solid rgba(11,21,48,.08); border-radius:999px; padding:5px 12px; font-size:12px; font-weight:500; background:#FFF; }
+  .btn-primary {
+    background: linear-gradient(180deg, #0468FF 0%, #0357D9 100%);
+    color: #FFF;
+    box-shadow: 0 0 0 1px rgba(255,255,255,.2) inset, 0 8px 22px -8px rgba(4,104,255,.55);
+    transition: transform .15s ease, box-shadow .25s ease, background .25s ease;
+  }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 12px 28px -8px rgba(4,104,255,.7); }
+  .btn-accent {
+    background: linear-gradient(180deg, #FFD83A 0%, #FFCC00 100%);
+    color: #152242;
+    box-shadow: 0 0 0 1px rgba(255,255,255,.4) inset, 0 8px 22px -8px rgba(255,204,0,.6);
+    transition: transform .15s ease, box-shadow .25s ease;
+    font-weight: 700;
+  }
+  .btn-accent:hover { transform: translateY(-1px); box-shadow: 0 12px 28px -8px rgba(255,204,0,.75); }
+  .btn-ghost { background:#FFF; border:1px solid #E4E4E7; color:#152242; transition: border-color .2s ease, background .2s ease; }
+  .btn-ghost:hover { background:#F4F6FA; border-color:#0468FF; color:#0468FF; }
+  .surface { background:#FFFFFF; border:1px solid #E4E4E7; border-radius:16px; box-shadow: 0 1px 2px rgba(11,21,48,.04); }
+  .surface-hov { transition: box-shadow .25s ease, border-color .25s ease, transform .2s ease; }
+  .surface-hov:hover { box-shadow: 0 12px 32px -8px rgba(4,104,255,.14), 0 2px 4px rgba(11,21,48,.04); border-color: #C9D8FF; transform: translateY(-2px); }
+  .nav-link { color:#4A5470; transition: color .2s ease; font-weight:500; }
+  .nav-link:hover { color:#0468FF; }
+  .grid-bg {
+    background-image:
+      linear-gradient(to right, rgba(11,21,48,.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(11,21,48,.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, black 30%, transparent 80%);
+  }
+  .gradient-text {
+    background: linear-gradient(120deg, #0468FF 0%, #024AB8 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .gradient-text-sun {
+    background: linear-gradient(120deg, #E6B800 0%, #B68C00 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  @keyframes pulse-soft { 0%,100% { opacity:.6 } 50% { opacity:1 } }
+  .ping { animation: pulse-soft 2.4s ease infinite; }
+  .reveal { opacity:0; transform: translateY(20px); transition: opacity .6s ease, transform .6s ease; }
+  .reveal.in { opacity:1; transform: translateY(0); }
+  .tier-popular {
+    background: linear-gradient(180deg, #FFFAE0 0%, #FFFFFF 70%);
+    border-color: #FFCC00 !important;
+    box-shadow: 0 18px 50px -16px rgba(255,204,0,.4);
+  }
+  .badge-blue { background:#EAF1FF; color:#0357D9; border:1px solid #C9D8FF; }
+  .badge-yellow { background:#FFF3B8; color:#8C6900; border:1px solid #FFE38A; }
+  .badge-green { background:#E8F7EC; color:#1F8A3B; border:1px solid #B9E5C4; }
+  .badge-red { background:#FDE8E5; color:#B82B1A; border:1px solid #F9C4BC; }
+</style>
+</head>
+<body class="min-h-screen overflow-x-hidden">
+
+<!-- ─────────────────────────── NAV ─────────────────────────── -->
+<header class="fixed top-0 inset-x-0 z-50 backdrop-blur-lg bg-white/85 border-b border-slate2-200">
+  <div class="max-w-7xl mx-auto px-5 lg:px-8 h-16 flex items-center justify-between">
+    <a href="#" class="flex items-center gap-2.5">
+      <span class="w-9 h-9 rounded-lg bg-cian-500 flex items-center justify-center text-white font-display font-extrabold text-lg">F</span>
+      <span class="display text-ink-800 text-lg">FlipperPro</span>
+      <span class="hidden sm:inline-block ml-1 text-xs text-slate2-500 font-medium">·&nbsp;Москва</span>
+    </a>
+    <nav class="hidden md:flex items-center gap-7 text-sm">
+      <a href="#product" class="nav-link">Продукт</a>
+      <a href="#how" class="nav-link">Как это работает</a>
+      <a href="#pricing" class="nav-link">Тарифы</a>
+      <a href="#services" class="nav-link">Услуги</a>
+      <a href="#faq" class="nav-link">FAQ</a>
+    </nav>
+    <a href="https://t.me/HappyFlipper_bot" class="btn-primary px-4 py-2 rounded-lg text-sm inline-flex items-center gap-2 font-semibold">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+      Открыть в Telegram
+    </a>
+  </div>
+</header>
+
+<!-- ─────────────────────────── HERO ─────────────────────────── -->
+<section class="relative pt-32 pb-20 overflow-hidden">
+  <div class="absolute inset-0 grid-bg pointer-events-none"></div>
+  <div class="max-w-7xl mx-auto px-5 lg:px-8 relative">
+    <div class="grid lg:grid-cols-12 gap-12 items-center">
+
+      <!-- Левая колонка: текст -->
+      <div class="lg:col-span-7">
+        <div class="inline-flex items-center gap-2 pill mb-6">
+          <span class="w-1.5 h-1.5 rounded-full bg-ok-500 ping"></span>
+          <span class="text-ok-600 font-semibold">LIVE</span>
+          <span class="text-slate2-500">38 OK-сделок в ленте за неделю</span>
+        </div>
+        <h1 class="display text-4xl md:text-6xl lg:text-7xl text-ink-800 leading-[1.02] mb-6">
+          Квартиры Москвы <br>с прибылью <span class="gradient-text">от 1 млн ₽</span><br>
+          <span class="text-3xl md:text-4xl lg:text-5xl text-ink-700 font-medium">за 2–4 месяца</span>
+        </h1>
+        <p class="text-lg md:text-xl text-ink-600 max-w-2xl mb-8">
+          Скринер обходит CIAN и Авито каждый час, считает реальную цену перепродажи и присылает в Telegram только те объекты, где математика сходится. Хотите глубже — наша команда возьмёт сделку под ключ и разделит прибыль по договору.
+        </p>
+        <div class="flex flex-wrap gap-3 mb-9">
+          <a href="https://t.me/HappyFlipper_bot" class="btn-primary px-6 py-3.5 rounded-xl inline-flex items-center gap-2 font-semibold">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+            7 дней бесплатно
+          </a>
+          <a href="#how" class="btn-ghost px-6 py-3.5 rounded-xl font-semibold inline-flex items-center gap-2">
+            Как это работает
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+          </a>
+        </div>
+        <div class="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-slate2-500">
+          <div class="flex items-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            Без карты на старте
+          </div>
+          <div class="flex items-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            Свежая лента каждый час
+          </div>
+          <div class="flex items-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            Торговая инструкция к каждому объекту
+          </div>
+        </div>
+      </div>
+
+      <!-- Правая колонка: bento с цифрами + превью карточки -->
+      <div class="lg:col-span-5">
+        <div class="grid grid-cols-2 gap-3">
+          <div class="surface p-5">
+            <div class="text-xs text-slate2-500 uppercase tracking-wider mb-2 font-semibold">За 7 дней</div>
+            <div class="num text-4xl text-ink-800 font-bold">38</div>
+            <div class="text-sm text-ok-600 font-semibold">OK-сделок в ленте</div>
+          </div>
+          <div class="surface p-5">
+            <div class="text-xs text-slate2-500 uppercase tracking-wider mb-2 font-semibold">Средняя</div>
+            <div class="num text-4xl text-ink-800 font-bold">1,82<span class="text-2xl text-slate2-500">М</span></div>
+            <div class="text-sm text-ok-600 font-semibold">прибыль с сделки NET</div>
+          </div>
+          <div class="surface col-span-2 p-5 relative overflow-hidden">
+            <div class="absolute right-0 top-0 w-24 h-24 bg-cian-50 rounded-full blur-2xl"></div>
+            <div class="flex items-center justify-between mb-3 relative">
+              <div class="text-xs text-slate2-500 uppercase tracking-wider font-semibold">Свежий лид · 2 мин назад</div>
+              <span class="pill badge-green">🟢 ПОДХОДИТ</span>
+            </div>
+            <div class="text-ink-800 display font-semibold text-lg mb-1 relative">2-к, Сеславинская д. 26</div>
+            <div class="text-xs text-slate2-500 mb-4 relative">39,7 м² · 4/5 эт. · кирпич 1964 · Филёвский парк</div>
+            <div class="grid grid-cols-3 gap-2 text-xs relative">
+              <div class="bg-slate2-50 rounded-lg p-2.5">
+                <div class="text-slate2-500">Объявление</div>
+                <div class="num text-ink-800 font-semibold">16,60М</div>
+              </div>
+              <div class="bg-slate2-50 rounded-lg p-2.5">
+                <div class="text-slate2-500">Buyout max</div>
+                <div class="num text-cian-600 font-semibold">14,80М</div>
+              </div>
+              <div class="bg-ok-50 rounded-lg p-2.5 border border-ok-500/30">
+                <div class="text-ok-600">Прибыль</div>
+                <div class="num text-ok-600 font-bold">+1,80М</div>
+              </div>
+            </div>
+            <div class="mt-3 text-[11px] text-slate2-500 relative">ROI 12,1% · аналогов: 8 · доверие: <span class="text-ink-800 font-semibold">высокое</span></div>
+          </div>
+          <div class="surface p-5">
+            <div class="text-xs text-slate2-500 uppercase tracking-wider mb-2 font-semibold">Источников</div>
+            <div class="num text-4xl text-ink-800 font-bold">2</div>
+            <div class="text-sm text-ink-600">CIAN + Авито</div>
+          </div>
+          <div class="surface p-5">
+            <div class="text-xs text-slate2-500 uppercase tracking-wider mb-2 font-semibold">Цикл</div>
+            <div class="num text-4xl text-ink-800 font-bold">1ч</div>
+            <div class="text-sm text-ink-600">Лента 07–24 МСК</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ─────────────────────────── PRODUCT (главный актив — бот) ─────────────────────────── -->
+<section id="product" class="py-24 bg-slate2-50 border-y border-slate2-200">
+  <div class="max-w-7xl mx-auto px-5 lg:px-8">
+    <div class="text-center mb-14">
+      <div class="pill inline-block badge-blue mb-5">⭐ Главный продукт</div>
+      <h2 class="display text-4xl md:text-5xl text-ink-800 mb-4">Бот, в котором всё под рукой</h2>
+      <p class="text-lg text-ink-600 max-w-2xl mx-auto">Откройте Telegram, задайте бюджет / район / макс. торг — и получайте ленту с торговой инструкцией. Внутри каждой карточки — ссылка на полный отчёт с интерактивной картой и аналогами.</p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-4 mb-10">
+      <div class="surface surface-hov p-7 md:row-span-2">
+        <div class="w-12 h-12 rounded-xl bg-cian-50 flex items-center justify-center mb-5">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0468FF" stroke-width="2"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg>
+        </div>
+        <h3 class="display text-2xl text-ink-800 mb-3">Подбор аналогов и расчёт продажи</h3>
+        <p class="text-ink-600 text-sm mb-5">Для каждого объявления — реальная цена быстрой продажи после ремонта. Сравнение с 5–10 похожими объектами в радиусе 1,5 км. Учёт ремонта, года, материала, этажности.</p>
+        <div class="bg-white rounded-xl p-5 border border-slate2-200">
+          <div class="text-xs text-slate2-500 mb-3 font-semibold">Пример: 8 аналогов в радиусе 1,5 км</div>
+          <div class="space-y-2 text-xs">
+            <div class="flex justify-between"><span class="text-ink-600">ул. Алябьева, 4К1</span><span class="num text-ink-800 font-semibold">370 413 ₽/м²</span></div>
+            <div class="flex justify-between"><span class="text-ink-600">Сеславинская, 6</span><span class="num text-ink-800 font-semibold">406 098 ₽/м²</span></div>
+            <div class="flex justify-between"><span class="text-ink-600">Минская, 12</span><span class="num text-ink-800 font-semibold">400 463 ₽/м²</span></div>
+            <div class="flex justify-between"><span class="text-ink-600">Б. Филёвская, 45К2</span><span class="num text-ink-800 font-semibold">476 077 ₽/м²</span></div>
+            <div class="flex justify-between border-t border-slate2-200 pt-2 mt-2"><span class="text-ok-600 font-semibold">Расчётная цена продажи</span><span class="num text-ok-600 font-bold">385 000 ₽/м²</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="surface surface-hov p-7">
+        <div class="w-12 h-12 rounded-xl bg-ok-50 flex items-center justify-center mb-5">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <h3 class="display text-xl text-ink-800 mb-2">Алерты «было → стало»</h3>
+        <p class="text-ink-600 text-sm">Объект уже у вас в ленте? Если продавец снизил цену — придёт повтор с пометкой «было: 12,5М → стало: 11,8М (−5,6%)».</p>
+      </div>
+
+      <div class="surface surface-hov p-7">
+        <div class="w-12 h-12 rounded-xl bg-cian-50 flex items-center justify-center mb-5">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0468FF" stroke-width="2"><path d="M12 2v6m0 8v6M5 12H2m20 0h-3m-1.5-7L15 7M9 17l-2.5 2.5M17.5 19L15 16.5M9 7L6.5 4.5"/></svg>
+        </div>
+        <h3 class="display text-xl text-ink-800 mb-2">«Снова в продаже»</h3>
+        <p class="text-ink-600 text-sm">Объект ушёл из архива и вернулся? Бот пометит «♻️ снова в продаже» и покажет, изменилась ли цена за время отсутствия.</p>
+      </div>
+
+      <div class="surface surface-hov p-7">
+        <div class="w-12 h-12 rounded-xl bg-sun-100 flex items-center justify-center mb-5">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#E6B800" stroke-width="2"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </div>
+        <h3 class="display text-xl text-ink-800 mb-2">Торговая инструкция</h3>
+        <p class="text-ink-600 text-sm">К каждому объекту: открывающая цена, walk-away, 3 аргумента для продавца. Не «торгуйся как чувствуешь», а конкретный сценарий.</p>
+      </div>
+
+      <div class="surface surface-hov p-7">
+        <div class="w-12 h-12 rounded-xl bg-cian-50 flex items-center justify-center mb-5">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0468FF" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        </div>
+        <h3 class="display text-xl text-ink-800 mb-2">Свежая лента каждый час</h3>
+        <p class="text-ink-600 text-sm">Бот сам обходит CIAN и Авито в реальном времени с 7 утра до полуночи. Снятые объявления отсекаются — никаких призраков в ленте.</p>
+      </div>
+    </div>
+
+    <!-- CTA в Telegram прямо посреди продукта -->
+    <div class="text-center">
+      <a href="https://t.me/HappyFlipper_bot" class="btn-accent px-7 py-4 rounded-xl inline-flex items-center gap-2 text-lg">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+        Открыть бот — 7 дней бесплатно
+      </a>
+      <p class="text-sm text-slate2-500 mt-3">Без карты на старте · отмена в один клик</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ─────────────────────────── ТРИ МОДЕЛИ ─────────────────────────── -->
+<section id="how" class="py-24 relative">
+  <div class="max-w-7xl mx-auto px-5 lg:px-8">
+    <div class="max-w-3xl mb-14">
+      <div class="pill inline-block badge-blue mb-5">Как зарабатывают на флиппинге</div>
+      <h2 class="display text-4xl md:text-5xl text-ink-800 mb-5">Три рабочие модели — выберите свою</h2>
+      <p class="text-lg text-ink-600">
+        Флиппинг — это не одна стратегия. Чем меньше работы, тем меньше прибыль, но и меньше времени. Бот показывает все три сценария и считает математику для каждого.
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-5">
+
+      <!-- Модель 1: Перекуп без ремонта -->
+      <div class="surface surface-hov p-7">
+        <div class="flex items-center justify-between mb-5">
+          <span class="pill badge-yellow">⚡ Перекуп</span>
+          <span class="num text-sm text-slate2-500">1–3 недели</span>
+        </div>
+        <h3 class="display text-2xl text-ink-800 mb-3">Купил и тут же продал — без ремонта</h3>
+        <p class="text-sm text-ink-600 mb-5">Продавец торопится: развод, переезд, наследство. Соглашается на цену <b>−25–30% от рынка</b>. Вы тут же выставляете на продажу <b>−10% от рынка</b> и закрываете за 1–3 недели. Без ремонта, без бригады, без налогов на материалы.</p>
+        <div class="space-y-2 text-xs mb-4">
+          <div class="flex justify-between"><span class="text-slate2-500">Рынок</span><span class="num text-ink-800">12,0М</span></div>
+          <div class="flex justify-between"><span class="text-slate2-500">Купили (−28%)</span><span class="num text-ink-800">8,6М</span></div>
+          <div class="flex justify-between"><span class="text-slate2-500">Продали (−10% от рынка)</span><span class="num text-ink-800">10,8М</span></div>
+          <div class="flex justify-between border-t border-slate2-200 pt-2"><span class="text-ok-600 font-semibold">Прибыль NET</span><span class="num text-ok-600 font-bold">~1,1М</span></div>
+        </div>
+        <div class="text-xs text-slate2-500">Редкие, но самые быстрые сделки. Бот отмечает таких продавцов как «горячих» — низкий days-on-market, тип «собственник», цена ниже квартилей.</div>
+      </div>
+
+      <!-- Модель 2: Косметика -->
+      <div class="surface surface-hov p-7 relative">
+        <span class="absolute -top-3 left-7 pill badge-blue font-semibold">★ Чаще всего</span>
+        <div class="flex items-center justify-between mb-5">
+          <span class="pill badge-blue">🎨 Лёгкая косметика</span>
+          <span class="num text-sm text-slate2-500">~2 месяца</span>
+        </div>
+        <h3 class="display text-2xl text-ink-800 mb-3">Освежили и продали</h3>
+        <p class="text-sm text-ink-600 mb-5">Квартира приличная, но без «свежей картинки». Покраска стен, замена обоев, чистка, освещение, мебельная стейджинг для фотосессии. Бюджет 300–800 тыс ₽. Срок продажи — около 2 месяцев по цене <b>немного ниже рынка</b>.</p>
+        <div class="space-y-2 text-xs mb-4">
+          <div class="flex justify-between"><span class="text-slate2-500">Купили</span><span class="num text-ink-800">10,5М</span></div>
+          <div class="flex justify-between"><span class="text-slate2-500">+ Косметика и стейджинг</span><span class="num text-ink-800">0,6М</span></div>
+          <div class="flex justify-between"><span class="text-slate2-500">Продали</span><span class="num text-ink-800">13,2М</span></div>
+          <div class="flex justify-between border-t border-slate2-200 pt-2"><span class="text-ok-600 font-semibold">Прибыль NET</span><span class="num text-ok-600 font-bold">~1,5–2,0М</span></div>
+        </div>
+        <div class="text-xs text-slate2-500">Самая частая модель в Москве. Идеально для первого опыта инвестора. Простой ремонт, низкий риск перерасхода.</div>
+      </div>
+
+      <!-- Модель 3: Полный ремонт -->
+      <div class="surface surface-hov p-7">
+        <div class="flex items-center justify-between mb-5">
+          <span class="pill badge-yellow">🛠 Полный ремонт</span>
+          <span class="num text-sm text-slate2-500">3–5 месяцев</span>
+        </div>
+        <h3 class="display text-2xl text-ink-800 mb-3">Купили, отремонтировали, продали дороже рынка</h3>
+        <p class="text-sm text-ink-600 mb-5">Квартира под полный ремонт (евро или дизайнерский). Бюджет 60–90 тыс ₽/м². 8–12 недель работы. Продажа по цене <b>немного выше рынка</b> за счёт «готовой картинки» и качества — типичный срок до 3 месяцев.</p>
+        <div class="space-y-2 text-xs mb-4">
+          <div class="flex justify-between"><span class="text-slate2-500">Купили</span><span class="num text-ink-800">48,6М</span></div>
+          <div class="flex justify-between"><span class="text-slate2-500">+ Ремонт и расходы</span><span class="num text-ink-800">7,8М</span></div>
+          <div class="flex justify-between"><span class="text-slate2-500">Продали</span><span class="num text-ink-800">82,3М</span></div>
+          <div class="flex justify-between border-t border-slate2-200 pt-2"><span class="text-ok-600 font-semibold">Прибыль NET</span><span class="num text-ok-600 font-bold">~3–8М</span></div>
+        </div>
+        <div class="text-xs text-slate2-500">Высокий чек — высокая прибыль. Подходит опытным инвесторам или сделкам «под ключ» вместе с нашей бригадой.</div>
+      </div>
+
+    </div>
+
+    <p class="text-center text-sm text-slate2-500 mt-8 max-w-3xl mx-auto">Срок продажи зависит от соотношения «цена / рынок». По цене <b>ниже рынка</b> — от 1 до 3 недель. По цене <b>на уровне рынка</b> — около 2 месяцев. По цене <b>выше рынка</b> — до 3 месяцев. Бот считает все три варианта одновременно.</p>
+  </div>
+</section>
+
+<!-- ─────────────────────────── ПОЧЕМУ САМОМУ ТЯЖЕЛО ─────────────────────────── -->
+<section class="py-20 bg-slate2-50 border-y border-slate2-200">
+  <div class="max-w-7xl mx-auto px-5 lg:px-8">
+    <div class="grid lg:grid-cols-2 gap-10 items-start">
+      <div>
+        <div class="pill inline-block badge-red mb-5">Почему 8 из 10 не доходят до прибыли</div>
+        <h2 class="display text-4xl text-ink-800 mb-6">Самостоятельный флиппинг ломается на трёх вещах</h2>
+        <p class="text-ink-600 mb-6">Мы много общались с инвесторами-новичками и опытными флипперами. Одни и те же ошибки приводят к одним и тем же потерям. Вот три самых частых:</p>
+        <ul class="space-y-4">
+          <li class="flex gap-4">
+            <div class="w-9 h-9 rounded-lg bg-err-500/10 border border-err-500/30 flex items-center justify-center flex-shrink-0 text-err-500 font-bold">!</div>
+            <div>
+              <div class="text-ink-800 font-semibold mb-0.5">Не видят настоящую цену перепродажи</div>
+              <div class="text-sm text-slate2-500">Берут «среднюю по дому», игнорируют ремонт аналогов, days-on-market, тип продавца.</div>
+            </div>
+          </li>
+          <li class="flex gap-4">
+            <div class="w-9 h-9 rounded-lg bg-err-500/10 border border-err-500/30 flex items-center justify-center flex-shrink-0 text-err-500 font-bold">!</div>
+            <div>
+              <div class="text-ink-800 font-semibold mb-0.5">Занижают расходы на ремонт и налоги</div>
+              <div class="text-sm text-slate2-500">«Уложусь в 40 тыс/м²» — а сверху лезут материалы, мебель, налог 13%, комиссия. Минус 1М к ожиданиям.</div>
+            </div>
+          </li>
+          <li class="flex gap-4">
+            <div class="w-9 h-9 rounded-lg bg-err-500/10 border border-err-500/30 flex items-center justify-center flex-shrink-0 text-err-500 font-bold">!</div>
+            <div>
+              <div class="text-ink-800 font-semibold mb-0.5">Покупают эмоционально, а не математически</div>
+              <div class="text-sm text-slate2-500">«Двушка на Тверской — точно вырастет!». Без расчёта buyout-цены сделка чаще убыточная.</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="surface p-7 md:p-9">
+        <div class="pill inline-block badge-green mb-5">Что делает FlipperPro</div>
+        <h3 class="display text-2xl text-ink-800 mb-5">Та же математика — но автоматически и по 12 000 объектов в день</h3>
+        <ul class="space-y-3 text-sm">
+          <li class="flex items-start gap-3"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg><span class="text-ink-700"><b>Подбирает максимальную цену выкупа</b>, при которой остаётся прибыль от 1М после налогов и всех расходов.</span></li>
+          <li class="flex items-start gap-3"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg><span class="text-ink-700"><b>Quick-sale по 25-му перцентилю</b> аналогов с ремонтом — а не «средняя по рынку».</span></li>
+          <li class="flex items-start gap-3"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg><span class="text-ink-700"><b>Сегментация дома</b> (эконом / комфорт / бизнес) — нормативы ремонта подбираются под класс.</span></li>
+          <li class="flex items-start gap-3"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg><span class="text-ink-700"><b>3 модели налога</b>: 13% НДФЛ / ИП 6% / 0% после 5 лет.</span></li>
+          <li class="flex items-start gap-3"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg><span class="text-ink-700"><b>Торговая инструкция</b>: с какой цены начинать, walk-away, аргументы для продавца.</span></li>
+          <li class="flex items-start gap-3"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg><span class="text-ink-700"><b>Алерты «было/стало»:</b> цена упала на 3%+ — приходит повтор с пометкой.</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ─────────────────────────── ДВЕ ВОРОНКИ ─────────────────────────── -->
+<section class="py-24">
+  <div class="max-w-7xl mx-auto px-5 lg:px-8">
+    <div class="text-center mb-12">
+      <h2 class="display text-4xl md:text-5xl text-ink-800 mb-3">Два пути — одна прибыль</h2>
+      <p class="text-lg text-ink-600">Выберите, насколько глубоко вы хотите участвовать в сделке</p>
+    </div>
+    <div class="grid lg:grid-cols-2 gap-5">
+      <div class="surface surface-hov p-8 md:p-10 relative overflow-hidden">
+        <div class="absolute -right-12 -top-12 w-48 h-48 rounded-full bg-cian-50 blur-2xl"></div>
+        <div class="pill inline-block badge-blue mb-5">Хочу делать сам</div>
+        <h3 class="display text-3xl text-ink-800 mb-3">Подписка на ленту</h3>
+        <p class="text-ink-600 mb-6">Вы сами выбираете объект, торгуетесь, нанимаете бригаду, продаёте. Мы даём данные, расчёты и уверенность в цифрах.</p>
+        <ul class="space-y-3 text-sm mb-8">
+          <li class="flex items-start gap-3 text-ink-700"><span class="text-cian-500 mt-0.5 font-bold">→</span><span>Лента OK-объектов с расчётной прибылью от 1М</span></li>
+          <li class="flex items-start gap-3 text-ink-700"><span class="text-cian-500 mt-0.5 font-bold">→</span><span>Личный фильтр (бюджет, район на карте, торг)</span></li>
+          <li class="flex items-start gap-3 text-ink-700"><span class="text-cian-500 mt-0.5 font-bold">→</span><span>Полный отчёт по каждому: аналоги, риски, инструкция</span></li>
+          <li class="flex items-start gap-3 text-ink-700"><span class="text-cian-500 mt-0.5 font-bold">→</span><span>Алерты на изменения цены и возврат из архива</span></li>
+        </ul>
+        <a href="#pricing" class="btn-ghost px-5 py-3 rounded-xl font-semibold inline-flex items-center gap-2">
+          Тарифы подписки
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        </a>
+      </div>
+
+      <div class="surface surface-hov p-8 md:p-10 relative overflow-hidden">
+        <div class="absolute -right-12 -top-12 w-48 h-48 rounded-full bg-ok-50 blur-2xl"></div>
+        <div class="pill inline-block badge-green mb-5">Хочу под ключ</div>
+        <h3 class="display text-3xl text-ink-800 mb-3">Сделка под ключ — делим прибыль</h3>
+        <p class="text-ink-600 mb-6">Мы находим объект, проверяем юридически, торгуемся, ремонтируем, продаём. Прибыль делится по договору.</p>
+        <ul class="space-y-3 text-sm mb-8">
+          <li class="flex items-start gap-3 text-ink-700"><span class="text-ok-600 mt-0.5 font-bold">→</span><span>Полное юридическое сопровождение и проверка</span></li>
+          <li class="flex items-start gap-3 text-ink-700"><span class="text-ok-600 mt-0.5 font-bold">→</span><span>Ремонт нашей бригадой по фиксированной смете</span></li>
+          <li class="flex items-start gap-3 text-ink-700"><span class="text-ok-600 mt-0.5 font-bold">→</span><span>Продажа с готовым пакетом фото и листингом</span></li>
+          <li class="flex items-start gap-3 text-ink-700"><span class="text-ok-600 mt-0.5 font-bold">→</span><span>Договор: 70% инвестору / 30% FlipperPro</span></li>
+        </ul>
+        <a href="#services" class="btn-ghost px-5 py-3 rounded-xl font-semibold inline-flex items-center gap-2">
+          Оставить заявку
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────── PRICING ─────────────────────────── -->
+<section id="pricing" class="py-24 bg-slate2-50 border-y border-slate2-200">
+  <div class="max-w-7xl mx-auto px-5 lg:px-8">
+    <div class="text-center mb-12">
+      <div class="pill inline-block badge-blue mb-5">Тарифы</div>
+      <h2 class="display text-4xl md:text-5xl text-ink-800 mb-3">Платите за результат, не за «доступ»</h2>
+      <p class="text-lg text-ink-600">Один найденный объект окупает год Pro-подписки</p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-5 max-w-6xl mx-auto">
+      <!-- FREE -->
+      <div class="surface surface-hov p-7">
+        <div class="text-slate2-500 text-sm uppercase tracking-widest mb-2 font-semibold">Free</div>
+        <div class="display text-4xl text-ink-800 mb-1">0 ₽</div>
+        <div class="text-sm text-slate2-500 mb-6">7 дней триал, без карты</div>
+        <ul class="space-y-3 text-sm mb-8">
+          <li class="flex items-start gap-2 text-ink-700"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>Лента до 5 объектов / день</li>
+          <li class="flex items-start gap-2 text-ink-700"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>Один фильтр (бюджет)</li>
+          <li class="flex items-start gap-2 text-ink-700"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>Базовая карточка с аналитикой</li>
+          <li class="flex items-start gap-2 text-slate2-300"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D4D7DD" stroke-width="3" class="flex-shrink-0 mt-0.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Без торговой инструкции</li>
+          <li class="flex items-start gap-2 text-slate2-300"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D4D7DD" stroke-width="3" class="flex-shrink-0 mt-0.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Без алертов по цене</li>
+        </ul>
+        <a href="https://t.me/HappyFlipper_bot" class="btn-ghost block text-center px-5 py-3 rounded-xl font-semibold">Попробовать</a>
+      </div>
+
+      <!-- PRO (popular) -->
+      <div class="surface tier-popular p-7 relative">
+        <div class="absolute -top-3 left-1/2 -translate-x-1/2 pill bg-sun-500 text-ink-800 border-transparent font-bold">★ Популярный</div>
+        <div class="text-cian-600 text-sm uppercase tracking-widest mb-2 font-semibold">Pro</div>
+        <div class="display text-4xl text-ink-800 mb-1">9 990 ₽<span class="text-base text-slate2-500 font-normal">/мес</span></div>
+        <div class="text-sm text-slate2-500 mb-6">или 89 990 ₽/год <span class="text-ok-600 font-semibold">(−25%)</span></div>
+        <ul class="space-y-3 text-sm mb-8">
+          <li class="flex items-start gap-2 text-ink-700"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>Безлимитная лента</li>
+          <li class="flex items-start gap-2 text-ink-700"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>Любой фильтр + район на карте</li>
+          <li class="flex items-start gap-2 text-ink-700"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg><b>Торговая инструкция</b> к каждому объекту</li>
+          <li class="flex items-start gap-2 text-ink-700"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>Алерты на падение цены и возврат из архива</li>
+          <li class="flex items-start gap-2 text-ink-700"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>Watchlist (личный список объектов)</li>
+          <li class="flex items-start gap-2 text-ink-700"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>Полный отчёт с картой и аналогами</li>
+        </ul>
+        <a href="https://t.me/HappyFlipper_bot" class="btn-accent block text-center px-5 py-3 rounded-xl">Купить Pro</a>
+      </div>
+
+      <!-- PREMIUM -->
+      <div class="surface surface-hov p-7">
+        <div class="text-slate2-500 text-sm uppercase tracking-widest mb-2 font-semibold">Premium</div>
+        <div class="display text-4xl text-ink-800 mb-1">29 990 ₽<span class="text-base text-slate2-500 font-normal">/мес</span></div>
+        <div class="text-sm text-slate2-500 mb-6">для серьёзных инвесторов</div>
+        <ul class="space-y-3 text-sm mb-8">
+          <li class="flex items-start gap-2 text-ink-700"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>Всё из Pro</li>
+          <li class="flex items-start gap-2 text-ink-700"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg><b>Личный аналитик</b> в чате 7 дней/неделю</li>
+          <li class="flex items-start gap-2 text-ink-700"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>Юридический чек по запросу (3/мес)</li>
+          <li class="flex items-start gap-2 text-ink-700"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>Смета ремонта от нашей бригады</li>
+          <li class="flex items-start gap-2 text-ink-700"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>Скидка 30% на услуги «под ключ»</li>
+        </ul>
+        <a href="https://t.me/HappyFlipper_bot" class="btn-ghost block text-center px-5 py-3 rounded-xl font-semibold">Связаться</a>
+      </div>
+    </div>
+
+    <p class="text-center text-xs text-slate2-500 mt-6">Оплата картой или СБП. Без авто-продления. Отмена в один клик из бота.</p>
+  </div>
+</section>
+
+<!-- ─────────────────────────── ДОП-УСЛУГИ ─────────────────────────── -->
+<section id="services" class="py-24 bg-slate2-50 border-y border-slate2-200">
+  <div class="max-w-7xl mx-auto px-5 lg:px-8">
+    <div class="grid lg:grid-cols-12 gap-10 mb-12">
+      <div class="lg:col-span-5">
+        <div class="pill inline-block badge-green mb-5">Услуги</div>
+        <h2 class="display text-4xl md:text-5xl text-ink-800 mb-5">Когда нужна команда — мы рядом</h2>
+        <p class="text-lg text-ink-600">Подписка показывает, ЧТО купить. Услуги решают КАК. От проверки документов до ремонта и продажи — один договор, прозрачная смета, ваш менеджер на сделке.</p>
+      </div>
+      <div class="lg:col-span-7 grid gap-4">
+        <!-- Юр сопровождение -->
+        <div class="surface surface-hov p-6">
+          <div class="flex items-start gap-5">
+            <div class="w-14 h-14 rounded-2xl bg-cian-50 flex items-center justify-center flex-shrink-0">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0468FF" stroke-width="2"><path d="M3 6l9-3 9 3v6c0 5-4 9-9 11-5-2-9-6-9-11V6z"/><path d="M9 12l2 2 4-4"/></svg>
+            </div>
+            <div class="flex-1">
+              <h3 class="display text-xl text-ink-800 mb-1">Юридическое сопровождение сделки</h3>
+              <p class="text-sm text-ink-600 mb-3">Проверка ЕГРН, истории переходов прав, обременений, долей несовершеннолетних, банкротств продавца. Сопровождение на самой сделке.</p>
+              <div class="flex flex-wrap gap-3 text-xs">
+                <span class="pill badge-yellow">от 45 000 ₽</span>
+                <span class="pill">срок 5–7 дней</span>
+                <span class="pill">все районы Москвы</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Бригада -->
+        <div class="surface surface-hov p-6">
+          <div class="flex items-start gap-5">
+            <div class="w-14 h-14 rounded-2xl bg-sun-100 flex items-center justify-center flex-shrink-0">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E6B800" stroke-width="2"><path d="M14 7l6 6M5 19L19 5M5 5l14 14"/></svg>
+            </div>
+            <div class="flex-1">
+              <h3 class="display text-xl text-ink-800 mb-1">Строительная бригада для флипперов</h3>
+              <p class="text-sm text-ink-600 mb-3">Ремонт «под продажу»: оптимальные материалы, проверенные подрядчики, фиксированный календарь. Косметика 6 недель, евро 8–10 недель.</p>
+              <div class="flex flex-wrap gap-3 text-xs">
+                <span class="pill badge-yellow">от 60 000 ₽/м²</span>
+                <span class="pill">5 типовых пакетов</span>
+                <span class="pill">фиксированная смета</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Под ключ -->
+        <div class="surface surface-hov p-6 shadow-pop" style="border-color:#FFCC00">
+          <div class="flex items-start gap-5">
+            <div class="w-14 h-14 rounded-2xl bg-sun-50 flex items-center justify-center flex-shrink-0">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E6B800" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-7"/></svg>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-1">
+                <h3 class="display text-xl text-ink-800">Сделка под ключ — делим прибыль</h3>
+                <span class="pill badge-yellow">флагман</span>
+              </div>
+              <p class="text-sm text-ink-600 mb-3">Вы вкладываете капитал. Мы находим, проверяем, торгуемся, ремонтируем, продаём, и переводим долю по итогу. Прибыль распределяется по договору: 70% инвестору, 30% FlipperPro.</p>
+              <div class="flex flex-wrap gap-3 text-xs">
+                <span class="pill badge-green">70% инвестору</span>
+                <span class="pill">срок 2–5 мес/сделка</span>
+                <span class="pill">от 15 млн ₽ капитал</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="text-center text-xs text-slate2-500 max-w-3xl mx-auto">Услуги оказываются на основании двустороннего договора с конкретными сроками и спецификациями. Стоимость и сроки в каждом случае согласовываются индивидуально и зависят от объекта.</p>
+  </div>
+</section>
+
+<!-- ─────────────────────────── FAQ ─────────────────────────── -->
+<section id="faq" class="py-24">
+  <div class="max-w-4xl mx-auto px-5 lg:px-8">
+    <div class="text-center mb-12">
+      <h2 class="display text-4xl md:text-5xl text-ink-800 mb-3">Частые вопросы</h2>
+      <p class="text-ink-600">Если ответа нет — напишите в Telegram, ответим в течение часа</p>
+    </div>
+
+    <div class="space-y-3">
+      <details class="surface p-6 group">
+        <summary class="flex justify-between items-center cursor-pointer list-none">
+          <span class="display text-lg text-ink-800">Сколько денег нужно, чтобы начать?</span>
+          <svg class="text-slate2-500 transition-transform group-open:rotate-45" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        </summary>
+        <p class="text-ink-600 mt-4 text-sm">Реалистичный минимум — 8–10 млн ₽ для входа в эконом-сегмент (1-к, спальные районы). Комфортный диапазон 15–30М. Премиум 50М+. Без собственного капитала можно зайти через сделку «под ключ» с долей прибыли — мы вкладываем экспертизу, вы доверяете капитал на одну сделку.</p>
+      </details>
+      <details class="surface p-6 group">
+        <summary class="flex justify-between items-center cursor-pointer list-none">
+          <span class="display text-lg text-ink-800">Откуда уверенность в прибыли от 1 млн ₽?</span>
+          <svg class="text-slate2-500 transition-transform group-open:rotate-45" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        </summary>
+        <p class="text-ink-600 mt-4 text-sm">Мы решаем уравнение в обратную сторону: задаём целевую прибыль (от 1М после налогов) и подбираем максимальную цену выкупа, при которой эта прибыль теоретически достижима по расчётам. Если объект продаётся дороже расчётного buyout — он попадает в ленту «с торгом». Если ещё дороже — в ленте не появится. Это не гарантия результата, а математический фильтр против заведомо убыточных сделок.</p>
+      </details>
+      <details class="surface p-6 group">
+        <summary class="flex justify-between items-center cursor-pointer list-none">
+          <span class="display text-lg text-ink-800">Какие сроки продажи квартир?</span>
+          <svg class="text-slate2-500 transition-transform group-open:rotate-45" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        </summary>
+        <p class="text-ink-600 mt-4 text-sm">Зависит от выбранной цены продажи: <b>ниже рынка на 5–10%</b> — типично 1–3 недели; <b>на уровне рынка (косметика)</b> — около 2 месяцев; <b>выше рынка (полный ремонт)</b> — до 3 месяцев. Бот считает все три варианта и показывает оптимальную точку. В смету заложен резерв на возможный простой.</p>
+      </details>
+      <details class="surface p-6 group">
+        <summary class="flex justify-between items-center cursor-pointer list-none">
+          <span class="display text-lg text-ink-800">Как происходит оплата подписки?</span>
+          <svg class="text-slate2-500 transition-transform group-open:rotate-45" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        </summary>
+        <p class="text-ink-600 mt-4 text-sm">Карта (Visa / MasterCard / МИР) или СБП через эквайринг. Электронный чек после оплаты. Без автопродления — следующий период оплачиваете сами. Отмена в один клик из бота.</p>
+      </details>
+      <details class="surface p-6 group">
+        <summary class="flex justify-between items-center cursor-pointer list-none">
+          <span class="display text-lg text-ink-800">Что входит в «под ключ»?</span>
+          <svg class="text-slate2-500 transition-transform group-open:rotate-45" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        </summary>
+        <p class="text-ink-600 mt-4 text-sm">Поиск объекта → юридическая проверка → переговоры с продавцом → сделка → ремонт → постановка на продажу с фотосессией → показы → закрытие. Вы получаете отчёт раз в 2 недели и итог на счёт после продажи. Доли распределяются по договору 70/30.</p>
+      </details>
+      <details class="surface p-6 group">
+        <summary class="flex justify-between items-center cursor-pointer list-none">
+          <span class="display text-lg text-ink-800">Чем вы отличаетесь от обычной риелторской подписки?</span>
+          <svg class="text-slate2-500 transition-transform group-open:rotate-45" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        </summary>
+        <p class="text-ink-600 mt-4 text-sm">Риелторы продают вам объявления — мы продаём вам математику. Каждый объект в ленте уже посчитан: реальная цена перепродажи после ремонта (по 25-му перцентилю аналогов), все расходы (ремонт + налоги + комиссии + резерв), максимальная цена выкупа с учётом целевой прибыли, и торговая инструкция. Вы получаете не «посмотрите вот эту квартиру», а готовый расчёт инвестиции.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────── FINAL CTA ─────────────────────────── -->
+<section class="py-24">
+  <div class="max-w-7xl mx-auto px-5 lg:px-8">
+    <div class="surface p-10 md:p-16 text-center relative overflow-hidden" style="background: linear-gradient(135deg, #FFFFFF 0%, #EAF1FF 100%); border-color:#C9D8FF;">
+      <div class="absolute -right-32 -top-32 w-96 h-96 rounded-full bg-cian-100 blur-3xl opacity-60"></div>
+      <div class="absolute -left-32 -bottom-32 w-96 h-96 rounded-full bg-sun-100 blur-3xl opacity-50"></div>
+      <div class="relative">
+        <h2 class="display text-4xl md:text-6xl text-ink-800 mb-5 max-w-3xl mx-auto leading-tight">Откройте первую сделку <span class="gradient-text">за 5 минут</span></h2>
+        <p class="text-lg text-ink-600 mb-8 max-w-2xl mx-auto">7 дней бесплатно. Без карты. Посмотрите ленту, разберитесь как мы считаем, решите подходит ли вам.</p>
+        <div class="flex flex-wrap gap-3 justify-center">
+          <a href="https://t.me/HappyFlipper_bot" class="btn-primary px-7 py-4 rounded-xl font-semibold inline-flex items-center gap-2 text-lg">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+            Открыть FlipperPro в Telegram
+          </a>
+          <a href="#services" class="btn-ghost px-7 py-4 rounded-xl font-semibold text-lg">Хочу сделку под ключ</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────── FOOTER ─────────────────────────── -->
+<footer class="border-t border-slate2-200 bg-white py-12">
+  <div class="max-w-7xl mx-auto px-5 lg:px-8">
+    <div class="grid md:grid-cols-4 gap-10 mb-10">
+      <div class="md:col-span-2">
+        <div class="flex items-center gap-2.5 mb-4">
+          <span class="w-9 h-9 rounded-lg bg-cian-500 flex items-center justify-center text-white font-display font-extrabold text-lg">F</span>
+          <span class="display text-ink-800 text-xl">FlipperPro</span>
+        </div>
+        <p class="text-sm text-ink-600 max-w-md mb-4">Скринер недооценённых квартир Москвы и команда экспертов. Помогаем инвесторам зарабатывать на флиппинге без головной боли.</p>
+        <div class="flex gap-3">
+          <a href="https://t.me/HappyFlipper_bot" class="w-9 h-9 rounded-lg border border-slate2-200 hover:border-cian-500 flex items-center justify-center text-slate2-500 hover:text-cian-500 transition-colors" aria-label="Telegram">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div>
+        <div class="display text-ink-800 text-sm mb-4 font-semibold">Продукт</div>
+        <ul class="space-y-2 text-sm">
+          <li><a href="#how" class="nav-link">Как работает</a></li>
+          <li><a href="#product" class="nav-link">Бот FlipperPro</a></li>
+          <li><a href="#pricing" class="nav-link">Тарифы</a></li>
+          <li><a href="#faq" class="nav-link">FAQ</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="display text-ink-800 text-sm mb-4 font-semibold">Услуги</div>
+        <ul class="space-y-2 text-sm">
+          <li><a href="#services" class="nav-link">Юр. сопровождение</a></li>
+          <li><a href="#services" class="nav-link">Бригада ремонта</a></li>
+          <li><a href="#services" class="nav-link">Под ключ</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="border-t border-slate2-200 pt-6 flex flex-col md:flex-row justify-between gap-4 text-xs text-slate2-500">
+      <div>© 2026 FlipperPro · реквизиты ИП будут добавлены при регистрации</div>
+      <div class="flex gap-5">
+        <a href="#" class="hover:text-cian-500">Политика конфиденциальности</a>
+        <a href="#" class="hover:text-cian-500">Договор оферты</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('section, .surface').forEach(el => {
+    el.classList.add('reveal'); obs.observe(el);
+  });
+</script>
+
+</body>
+</html>
