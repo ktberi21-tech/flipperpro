@@ -558,64 +558,282 @@ function useExample(url) {
 </section>
 
 <!-- ─────────────────────────── PRICING ─────────────────────────── -->
+<style>
+  /* Tier-карточка: ровная высота, аккуратный hover, фокус на «Pro» */
+  .tier-card { display:flex; flex-direction:column; height:100%; }
+  .tier-card .tier-cta { margin-top:auto; }
+  .tier-head .tier-name { font-size:13px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:#152242; }
+  .tier-head .tier-sub { font-size:13px; color:#6B7280; min-height:34px; }
+  .tier-price { font-weight:800; letter-spacing:-.024em; }
+  .tier-price-num { font-size:34px; color:#152242; }
+  .tier-price-unit { font-size:14px; color:#6B7280; font-weight:500; }
+  .tier-year { font-size:12px; color:#6B7280; margin-top:2px; }
+  .tier-year .save { color:#2BA84A; font-weight:600; }
+
+  /* Сравнительная таблица — sticky header + ровные строки + Pro-колонка подсвечена */
+  .compare-wrap { background:#FFFFFF; border:1px solid #E4E4E7; border-radius:16px; box-shadow:0 1px 2px rgba(11,21,48,.04); overflow:hidden; }
+  .compare { width:100%; border-collapse:collapse; font-size:14px; }
+  .compare thead th { padding:18px 14px; background:#FAFBFD; border-bottom:1px solid #E4E4E7; text-align:center; font-weight:700; color:#152242; font-size:13px; letter-spacing:.04em; text-transform:uppercase; }
+  .compare thead th:first-child { text-align:left; color:#6B7280; font-weight:600; }
+  .compare thead .col-price { font-size:12px; font-weight:500; color:#6B7280; text-transform:none; letter-spacing:0; }
+  .compare tbody td { padding:14px; border-bottom:1px solid #F0F1F4; text-align:center; vertical-align:middle; color:#152242; }
+  .compare tbody td:first-child { text-align:left; color:#152242; font-weight:500; }
+  .compare tbody tr:last-child td { border-bottom:none; }
+  .compare tbody tr:hover td { background:#FAFBFD; }
+  .compare .col-pro { background:#F4F8FF; }
+  .compare thead .col-pro { background:#E8F0FF; color:#0468FF; position:relative; }
+  .compare thead .col-pro::before { content:"★ Популярный"; position:absolute; top:-10px; left:50%; transform:translateX(-50%); background:#FFCC00; color:#152242; font-size:11px; font-weight:700; padding:3px 10px; border-radius:999px; letter-spacing:.02em; text-transform:none; white-space:nowrap; }
+  .compare .check svg, .compare .cross svg { display:inline-block; }
+  .compare .muted { color:#94A3B8; }
+
+  @media (max-width: 900px) {
+    .compare-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+    .compare { min-width:760px; }
+  }
+</style>
 <section id="pricing" class="py-24 bg-slate2-50 border-y border-slate2-200">
   <div class="max-w-7xl mx-auto px-5 lg:px-8">
+
     <div class="text-center mb-12">
-      <div class="pill inline-block badge-blue mb-5">Тарифы</div>
+      <div class="pill inline-block badge-blue mb-5">Тарифы и оплата</div>
       <h2 class="display text-4xl md:text-5xl text-ink-800 mb-3">Платите за результат, не за «доступ»</h2>
       <p class="text-lg text-ink-600">Один найденный объект окупает год Pro-подписки</p>
+      <p class="text-sm text-slate2-500 mt-3">🎁 Первые 7 дней — полный доступ ко всем фичам, без карты</p>
     </div>
 
-    <div class="grid md:grid-cols-3 gap-5 max-w-6xl mx-auto">
+    <!-- ─── 5 КАРТОЧЕК ТАРИФОВ ─── -->
+    <div class="grid xl:grid-cols-5 md:grid-cols-3 grid-cols-1 gap-4 mb-12">
+
       <!-- FREE -->
-      <div class="surface surface-hov p-7">
-        <div class="text-slate2-500 text-sm uppercase tracking-widest mb-2 font-semibold">Free</div>
-        <div class="display text-4xl text-ink-800 mb-1">0 ₽</div>
-        <div class="text-sm text-slate2-500 mb-6">7 дней триал, без карты</div>
-        <ul class="space-y-3 text-sm mb-8">
-          <li class="flex items-start gap-2 text-ink-700"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>Лента до 5 объектов / день</li>
-          <li class="flex items-start gap-2 text-ink-700"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>Один фильтр (бюджет)</li>
-          <li class="flex items-start gap-2 text-ink-700"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>Базовая карточка с аналитикой</li>
-          <li class="flex items-start gap-2 text-slate2-300"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D4D7DD" stroke-width="3" class="flex-shrink-0 mt-0.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Без торговой инструкции</li>
-          <li class="flex items-start gap-2 text-slate2-300"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D4D7DD" stroke-width="3" class="flex-shrink-0 mt-0.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Без алертов по цене</li>
+      <div class="surface surface-hov tier-card p-6">
+        <div class="tier-head mb-4">
+          <div class="tier-name text-slate2-500 mb-2">Free</div>
+          <div class="tier-price"><span class="tier-price-num">0&nbsp;₽</span></div>
+          <div class="tier-year">после 7 дней триала</div>
+          <div class="tier-sub mt-3">Базовая лента — попробовать без карты</div>
+        </div>
+        <ul class="space-y-2 text-sm mb-6">
+          <li class="flex items-start gap-2 text-ink-700"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>5 объектов в день</li>
+          <li class="flex items-start gap-2 text-ink-700"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>Один фильтр (бюджет)</li>
+          <li class="flex items-start gap-2 text-ink-700"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>Адрес, цена, бейдж сделки</li>
         </ul>
-        <a href="https://t.me/HappyFlipper_bot" class="btn-ghost block text-center px-5 py-3 rounded-xl font-semibold">Попробовать</a>
+        <a href="https://t.me/HappyFlipper_bot" class="tier-cta btn-ghost block text-center px-4 py-3 rounded-xl font-semibold text-sm">Попробовать</a>
       </div>
 
-      <!-- PRO (popular) -->
-      <div class="surface tier-popular p-7 relative">
-        <div class="absolute -top-3 left-1/2 -translate-x-1/2 pill bg-sun-500 text-ink-800 border-transparent font-bold">★ Популярный</div>
-        <div class="text-cian-600 text-sm uppercase tracking-widest mb-2 font-semibold">Pro</div>
-        <div class="display text-4xl text-ink-800 mb-1">9 990 ₽<span class="text-base text-slate2-500 font-normal">/мес</span></div>
-        <div class="text-sm text-slate2-500 mb-6">или 89 990 ₽/год <span class="text-ok-600 font-semibold">(−25%)</span></div>
-        <ul class="space-y-3 text-sm mb-8">
-          <li class="flex items-start gap-2 text-ink-700"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>Безлимитная лента</li>
-          <li class="flex items-start gap-2 text-ink-700"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>Любой фильтр + район на карте</li>
-          <li class="flex items-start gap-2 text-ink-700"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg><b>Торговая инструкция</b> к каждому объекту</li>
-          <li class="flex items-start gap-2 text-ink-700"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>Алерты на падение цены и возврат из архива</li>
-          <li class="flex items-start gap-2 text-ink-700"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>Watchlist (личный список объектов)</li>
-          <li class="flex items-start gap-2 text-ink-700"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>Полный отчёт с картой и аналогами</li>
+      <!-- STARTER -->
+      <div class="surface surface-hov tier-card p-6">
+        <div class="tier-head mb-4">
+          <div class="tier-name text-slate2-500 mb-2">Starter</div>
+          <div class="tier-price">
+            <span class="tier-price-num">9 990&nbsp;₽</span><span class="tier-price-unit">/мес</span>
+          </div>
+          <div class="tier-year">или <b>89 990 ₽</b>/год <span class="save">−25%</span></div>
+          <div class="tier-sub mt-3">Аналитика NET и потолок — без подсказки по торгу</div>
+        </div>
+        <ul class="space-y-2 text-sm mb-6">
+          <li class="flex items-start gap-2 text-ink-700"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>Безлимитная лента</li>
+          <li class="flex items-start gap-2 text-ink-700"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg><b>NET-прибыль + buyout_max</b></li>
+          <li class="flex items-start gap-2 text-ink-700"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>Полная финмодель</li>
+          <li class="flex items-start gap-2 text-ink-700"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>Watchlist до 3 объектов</li>
         </ul>
-        <a href="https://t.me/HappyFlipper_bot" class="btn-accent block text-center px-5 py-3 rounded-xl">Купить Pro</a>
+        <a href="https://t.me/HappyFlipper_bot?start=upgrade_starter" class="tier-cta btn-ghost block text-center px-4 py-3 rounded-xl font-semibold text-sm">Выбрать Starter</a>
       </div>
 
-      <!-- PREMIUM -->
-      <div class="surface surface-hov p-7">
-        <div class="text-slate2-500 text-sm uppercase tracking-widest mb-2 font-semibold">Premium</div>
-        <div class="display text-4xl text-ink-800 mb-1">29 990 ₽<span class="text-base text-slate2-500 font-normal">/мес</span></div>
-        <div class="text-sm text-slate2-500 mb-6">для серьёзных инвесторов</div>
-        <ul class="space-y-3 text-sm mb-8">
-          <li class="flex items-start gap-2 text-ink-700"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>Всё из Pro</li>
-          <li class="flex items-start gap-2 text-ink-700"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg><b>Личный аналитик</b> в чате 7 дней/неделю</li>
-          <li class="flex items-start gap-2 text-ink-700"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>Юридический чек по запросу (3/мес)</li>
-          <li class="flex items-start gap-2 text-ink-700"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>Смета ремонта от нашей бригады</li>
-          <li class="flex items-start gap-2 text-ink-700"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>Скидка 30% на услуги «под ключ»</li>
+      <!-- PRO FLIPPER (popular) -->
+      <div class="surface tier-popular tier-card p-6 relative">
+        <div class="absolute -top-3 left-1/2 -translate-x-1/2 pill bg-sun-500 text-ink-800 border-transparent font-bold text-xs whitespace-nowrap">★ Популярный</div>
+        <div class="tier-head mb-4">
+          <div class="tier-name text-cian-600 mb-2">Pro Flipper</div>
+          <div class="tier-price">
+            <span class="tier-price-num">29 990&nbsp;₽</span><span class="tier-price-unit">/мес</span>
+          </div>
+          <div class="tier-year">или <b>269 990 ₽</b>/год <span class="save">−25%</span></div>
+          <div class="tier-sub mt-3">Полный инвест-кейс: торговая инструкция и алерты</div>
+        </div>
+        <ul class="space-y-2 text-sm mb-6">
+          <li class="flex items-start gap-2 text-ink-700"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>Всё из Starter</li>
+          <li class="flex items-start gap-2 text-ink-700"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg><b>🎯 Торговая инструкция</b></li>
+          <li class="flex items-start gap-2 text-ink-700"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>Алерты ↓цена / ♻ возврат</li>
+          <li class="flex items-start gap-2 text-ink-700"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>∞ watchlist + polygon</li>
         </ul>
-        <a href="https://t.me/HappyFlipper_bot" class="btn-ghost block text-center px-5 py-3 rounded-xl font-semibold">Связаться</a>
+        <a href="https://t.me/HappyFlipper_bot?start=upgrade_pro" class="tier-cta btn-accent block text-center px-4 py-3 rounded-xl text-sm">Купить Pro</a>
+      </div>
+
+      <!-- TEAM SMALL -->
+      <div class="surface surface-hov tier-card p-6">
+        <div class="tier-head mb-4">
+          <div class="tier-name text-slate2-500 mb-2">Team Small</div>
+          <div class="tier-price">
+            <span class="tier-price-num">49 990&nbsp;₽</span><span class="tier-price-unit">/мес</span>
+          </div>
+          <div class="tier-year">или <b>449 990 ₽</b>/год <span class="save">−25%</span></div>
+          <div class="tier-sub mt-3">Pro для команды — до 5 риелторов</div>
+        </div>
+        <ul class="space-y-2 text-sm mb-6">
+          <li class="flex items-start gap-2 text-ink-700"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>Всё из Pro × <b>5 мест</b></li>
+          <li class="flex items-start gap-2 text-ink-700"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>B2B-договор + закр. документы</li>
+          <li class="flex items-start gap-2 text-ink-700"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>Поддержка 24ч SLA</li>
+        </ul>
+        <a href="https://t.me/AdminFlipperPro" class="tier-cta btn-ghost block text-center px-4 py-3 rounded-xl font-semibold text-sm">Связаться</a>
+      </div>
+
+      <!-- TEAM -->
+      <div class="surface surface-hov tier-card p-6">
+        <div class="tier-head mb-4">
+          <div class="tier-name text-slate2-500 mb-2">Team</div>
+          <div class="tier-price">
+            <span class="tier-price-num">69 990&nbsp;₽</span><span class="tier-price-unit">/мес</span>
+          </div>
+          <div class="tier-year">или <b>629 990 ₽</b>/год <span class="save">−25%</span></div>
+          <div class="tier-sub mt-3">Большое агентство — до 10 риелторов, приоритет</div>
+        </div>
+        <ul class="space-y-2 text-sm mb-6">
+          <li class="flex items-start gap-2 text-ink-700"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>Всё из Pro × <b>10 мест</b></li>
+          <li class="flex items-start gap-2 text-ink-700"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>Кастомные фильтры под агентство</li>
+          <li class="flex items-start gap-2 text-ink-700"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3" class="flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>Приоритетная поддержка 1ч SLA</li>
+        </ul>
+        <a href="https://t.me/AdminFlipperPro" class="tier-cta btn-ghost block text-center px-4 py-3 rounded-xl font-semibold text-sm">Связаться</a>
       </div>
     </div>
 
-    <p class="text-center text-xs text-slate2-500 mt-6">Оплата картой или СБП. Без авто-продления. Отмена в один клик из бота.</p>
+    <!-- ─── СРАВНИТЕЛЬНАЯ ТАБЛИЦА ─── -->
+    <div class="text-center mb-6">
+      <h3 class="display text-2xl md:text-3xl text-ink-800 mb-1">Подробное сравнение</h3>
+      <p class="text-sm text-slate2-500">Все фичи на одном экране</p>
+    </div>
+
+    <div class="compare-wrap mb-6">
+      <table class="compare">
+        <thead>
+          <tr>
+            <th>Фича</th>
+            <th>
+              Free
+              <div class="col-price">0 ₽</div>
+            </th>
+            <th>
+              Starter
+              <div class="col-price">9 990 ₽</div>
+            </th>
+            <th class="col-pro">
+              Pro&nbsp;Flipper
+              <div class="col-price" style="color:#0468FF">29 990 ₽</div>
+            </th>
+            <th>
+              Team&nbsp;Small
+              <div class="col-price">49 990 ₽</div>
+            </th>
+            <th>
+              Team
+              <div class="col-price">69 990 ₽</div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Карточек в день</td>
+            <td>5</td>
+            <td>∞</td>
+            <td class="col-pro">∞</td>
+            <td>∞</td>
+            <td>∞</td>
+          </tr>
+          <tr>
+            <td>NET-прибыль + buyout_max</td>
+            <td><span class="cross"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span></td>
+            <td><span class="check"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></td>
+            <td class="col-pro"><span class="check"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></td>
+            <td><span class="check"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></td>
+            <td><span class="check"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></td>
+          </tr>
+          <tr>
+            <td>🎯 Торговая инструкция</td>
+            <td><span class="cross"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span></td>
+            <td><span class="cross"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span></td>
+            <td class="col-pro"><span class="check"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></td>
+            <td><span class="check"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></td>
+            <td><span class="check"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></td>
+          </tr>
+          <tr>
+            <td>Алерты ↓цена / ♻ возврат из архива</td>
+            <td><span class="cross"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span></td>
+            <td><span class="cross"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span></td>
+            <td class="col-pro"><span class="check"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></td>
+            <td><span class="check"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></td>
+            <td><span class="check"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></td>
+          </tr>
+          <tr>
+            <td>Watchlist</td>
+            <td><span class="muted">—</span></td>
+            <td>до 3</td>
+            <td class="col-pro">∞</td>
+            <td>∞</td>
+            <td>∞</td>
+          </tr>
+          <tr>
+            <td>Polygon-фильтр на карте</td>
+            <td><span class="cross"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span></td>
+            <td><span class="cross"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span></td>
+            <td class="col-pro"><span class="check"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></td>
+            <td><span class="check"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></td>
+            <td><span class="check"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2BA84A" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></td>
+          </tr>
+          <tr>
+            <td>Посадочных мест (seats)</td>
+            <td>1</td>
+            <td>1</td>
+            <td class="col-pro">1</td>
+            <td><b>до 5</b></td>
+            <td><b>до 10</b></td>
+          </tr>
+          <tr>
+            <td>Поддержка</td>
+            <td><span class="muted">—</span></td>
+            <td>базовая</td>
+            <td class="col-pro">базовая</td>
+            <td>24ч SLA</td>
+            <td><b>1ч SLA</b></td>
+          </tr>
+          <tr>
+            <td>Год со скидкой −25%</td>
+            <td><span class="muted">—</span></td>
+            <td>89 990 ₽</td>
+            <td class="col-pro" style="font-weight:700;color:#0468FF">269 990 ₽</td>
+            <td>449 990 ₽</td>
+            <td>629 990 ₽</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td><a href="https://t.me/HappyFlipper_bot" class="text-cian-600 text-sm font-semibold hover:underline">Попробовать&nbsp;→</a></td>
+            <td><a href="https://t.me/HappyFlipper_bot?start=upgrade_starter" class="text-cian-600 text-sm font-semibold hover:underline">Starter&nbsp;→</a></td>
+            <td class="col-pro"><a href="https://t.me/HappyFlipper_bot?start=upgrade_pro" class="btn-accent inline-block px-4 py-2 rounded-lg text-xs">Купить Pro</a></td>
+            <td><a href="https://t.me/AdminFlipperPro" class="text-cian-600 text-sm font-semibold hover:underline">Связаться&nbsp;→</a></td>
+            <td><a href="https://t.me/AdminFlipperPro" class="text-cian-600 text-sm font-semibold hover:underline">Связаться&nbsp;→</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ─── ИНФО ПО ОПЛАТЕ ─── -->
+    <div class="grid md:grid-cols-3 gap-4 mb-6 text-sm">
+      <div class="surface p-5">
+        <div class="font-semibold text-ink-800 mb-1">💳 Способы оплаты</div>
+        <p class="text-ink-600">СБП (Система быстрых платежей), карты Visa / MasterCard / МИР. После регистрации ИП — встроенная оплата прямо в боте.</p>
+      </div>
+      <div class="surface p-5">
+        <div class="font-semibold text-ink-800 mb-1">🔁 Без автопродления</div>
+        <p class="text-ink-600">Подписка не списывается автоматически. Каждый период вы решаете заново. Отмена — просто не платить.</p>
+      </div>
+      <div class="surface p-5">
+        <div class="font-semibold text-ink-800 mb-1">📄 Закрывающие документы</div>
+        <p class="text-ink-600">Для Team-тарифов — B2B-договор, акт и счёт-фактура. Возможна оплата по счёту.</p>
+      </div>
+    </div>
+
+    <p class="text-center text-xs text-slate2-500">
+      Цены указаны в рублях с НДС. Реквизиты ИП FlipperPro выдаются по запросу после оплаты.
+      Все условия подписки — в <a href="#" class="underline hover:text-cian-600">оферте</a>.
+    </p>
   </div>
 </section>
 
